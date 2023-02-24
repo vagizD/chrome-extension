@@ -1,0 +1,30 @@
+
+.crx_mouse_visited {
+  background-color: #bcd5eb;
+  outline: 1px solid #5166bb;
+}
+
+.tooltip {
+  background-color: darkgrey;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  font-size: 14px;
+  left: 50%;
+  margin-left: -60px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}

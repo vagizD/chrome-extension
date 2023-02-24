@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "SubLive",
+  "description": "Tool for learning while watching",
+  "version": "1.0",
+
+  "action": {
+    "default_popup": "logo/default_popup.html",
+    "default_icon": "logo/default_img.png"
+  },
+
+  "permissions": ["scripting"],
+
+  "content_scripts": [
+    {
+      "js": ["hover/hover.js"],
+      "css": ["hover/hover.css"],
+      "matches":
+      [
+        "http://*/*",
+        "https://*/*"
+      ]
+    }
+  ]
+}
