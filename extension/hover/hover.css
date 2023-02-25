@@ -4,9 +4,9 @@
   outline: 1px solid #5166bb;
 }
 
-.tooltip {
-  background-color: darkgrey;
-}
+/*.tooltip {*/
+/*  background-color: darkgrey;*/
+/*}*/
 
 .tooltip .tooltiptext {
   visibility: hidden;
