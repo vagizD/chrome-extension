@@ -21,8 +21,11 @@ function getWords() {
             if (endWord(range) && range.endOffset > 0) range.setEnd(range.endContainer, range.endOffset - 1)
 
         }
+        return range.toString()
     }
-    return range.toString()
+    else {
+        return "Oops..."
+    }
 }
 
 function getText(el) {
