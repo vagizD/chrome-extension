@@ -7,8 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-IAM_TOKEN = 't1.9euelZqcjceYl8bLlsnOipOeyMfGlu3rnpWam4uXnZyci8uRi5iQzczNyMvl8_d4Dkdf-e9GAy9p_t3z9zg9RF_570YDL2n-.c43swKOubcubP_9VVLqlTELU2Je71_BnzzSD1SaL8_T4lqYCa3xc2vgXQoJZF1KIx2muZOtdCYKpYB5VbsZIDg'
-folder_id = 'b1gq88cm7pq2tr39ka4r'
+IAM_TOKEN = 'Your token'
+folder_id = 'Your folder_id'
 target_language = 'ru'
 texts = []
 
