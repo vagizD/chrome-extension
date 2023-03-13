@@ -28,6 +28,25 @@ function getWords() {
     }
 }
 
+async function postTranslation(line){
+    const response = await fetch("http://localhost:8000/api/totrans", {
+        method: "POST",
+        headers: {"Accept": "application/json", "Content-Type": "application/json"},
+        body: JSON.stringify({
+            word: line
+        })
+    });
+    if(response.ok === true) {
+        const new_word = await response.json();
+        console.log(new_word["word"].toString())
+        return new_word["word"];
+    }
+    else {
+        const error = await response.json();
+        console.log(error.message)
+    }
+}
+
 function getText(el) {
     let ret = "";
     var length = el.childNodes.length;
@@ -45,7 +64,7 @@ function getCount(el) {
     return words.split(' ').length;
 }
 
-var makeHover = function(e) {
+var makeHover = async function(e) {
     var target = e.target;
 
     if (target.textContent) {
@@ -55,9 +74,11 @@ var makeHover = function(e) {
             prevDom.removeChild(prevSpan);
         }
 
-        const span = document.createElement('span');
+        const span = await document.createElement('span');
         span.classList.add('tooltiptext');
-        span.appendChild(document.createTextNode("Word was founded: " + getWords()));
+        var word = await getWords();
+        var result = await postTranslation(word);
+        span.appendChild(document.createTextNode("Word was founded: " + result));
 
         target.classList.add(MVC);
         target.appendChild(span)
