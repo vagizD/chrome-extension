@@ -1,8 +1,8 @@
-function getWordUnderCursor(event) {
+function getWordUnderCursor(e) {
     var range, textNode, offset;
 
     if (document.caretRangeFromPoint) {     // Chrome
-        range = document.caretRangeFromPoint(event.clientX, event.clientY);
+        range = document.caretRangeFromPoint(e.clientX, e.clientY);
         textNode = range.startContainer;
         offset = range.startOffset;
     }
