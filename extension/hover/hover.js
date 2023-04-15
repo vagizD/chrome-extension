@@ -1,3 +1,32 @@
+function getWordUnderCursor(event) {
+    var range, textNode, offset;
+
+    if (document.caretRangeFromPoint) {     // Chrome
+        range = document.caretRangeFromPoint(event.clientX, event.clientY);
+        textNode = range.startContainer;
+        offset = range.startOffset;
+    }
+    var data = textNode.data,
+        i = offset,
+        begin,
+        end;
+    if(data !== undefined) {
+        while (i > 0 && data[i] !== " ") {
+            --i;
+        }
+        begin = i;
+        i = offset;
+        while (i < data.length && data[i] !== " ") {
+            ++i;
+        }
+        end = i;
+
+        return data.substring(begin, end);
+    }
+    else {
+        return "Oops..."
+    }
+}
 function getWords() {
     var selected = window.getSelection()
     if(selected.rangeCount > 0) {
@@ -65,28 +94,37 @@ function getCount(el) {
 }
 
 var makeHover = async function(e) {
+
     var target = e.target;
 
     if (target.textContent) {
 
-        if (prevDom != null) {
+        if (prevDom !== null) {
+            console.log(prevDom);
+            console.log(prevDom.className)
             prevDom.classList.remove(MVC);
             prevDom.removeChild(prevSpan);
         }
 
         const span = await document.createElement('span');
         span.classList.add('tooltiptext');
-        var word = await getWords();
+        var word = await getWordUnderCursor(e);
         var result = await postTranslation(word);
-        span.appendChild(document.createTextNode("Word was founded: " + result));
+        if (result !== 'Oops...') {
 
-        target.classList.add(MVC);
-        target.appendChild(span)
+            span.appendChild(document.createTextNode("Word was founded: " + result));
 
-        prevDom = target;
-        prevSpan = span;
+            target.classList.add(MVC);
+            target.appendChild(span);
+
+            prevDom = target;
+            prevSpan = span;
+
+        }
     }
 }
+
+
 
 var MVC = 'tooltip';
 
