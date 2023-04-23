@@ -9,11 +9,11 @@
     "default_icon": "logo/default_img.png"
   },
 
-  "permissions": ["scripting"],
+  "permissions": ["scripting", "identity", "identity.email"],
 
   "content_scripts": [
     {
-      "js": ["hover/hover.js"],
+      "js": ["hover/hover.js", "logo/popup.js"],
       "css": ["hover/hover.css"],
       "matches":
       [

@@ -7,8 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-IAM_TOKEN = 'Your token'
-folder_id = 'Your folder_id'
+IAM_TOKEN = 't1.9euelZrKm5iYzZ7GlMzLzJuOnM6Jy-3rnpWam4uXnZyci8uRi5iQzczNyMvl8_dXTxle-e86DSBc_N3z9xd-Fl757zoNIFz8.g_5BsMdFkbbhVnpMmqgRsk8BYsyriYFjmcpQoIqsXWgcqFySvcgCsxp4rfBQKcm5YefoRwGREdn9mlmz8oNcDw'
+folder_id = 'b1gq88cm7pq2tr39ka4r'
 target_language = 'ru'
 texts = []
 
@@ -33,11 +33,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 @app.get("/api/gettrans")
 def transResponse(data=Body()):
     ...
-
 
 @app.post("/api/totrans")
 def transRequest(data=Body()):
@@ -52,6 +50,12 @@ def transRequest(data=Body()):
     print(data["word"])
     return data
 
+@app.post("/api/totag")
+def tagRequest(data=Body()):
+    print(data["tag_word"])
+    print(data["email_word"])
+    return data
 
 if __name__ == '__main__':
     uvicorn.run(app='server:app', reload=True)
+

@@ -4,7 +4,14 @@
   <meta charset="UTF-8">
 </head>
 <body>
-    <h1>SubLive</h1>
-    <script src="popup.js"></script>
+    <form method="post" class="subscription">
+        <div class="subscription-inner">
+            <label class="subscription-label" for="subscription-tag">Leave a short message</label>
+            <input class="subscription-tag" placeholder="placeholder" value="placeholder" required id="subscription-tag">
+            <button class="button subscription-button" type="submit">Submit</button>
+        </div>
+    </form>
+    <textarea></textarea>
+    <script src="./popup.js" type="module"></script>
 </body>
 </html>
