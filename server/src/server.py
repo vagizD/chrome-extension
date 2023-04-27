@@ -52,8 +52,7 @@ def transRequest(data=Body()):
 
 @app.post("/api/totag")
 def tagRequest(data=Body()):
-    print(data["tag_word"])
-    print(data["email_word"])
+    print(data)
     return data
 
 if __name__ == '__main__':

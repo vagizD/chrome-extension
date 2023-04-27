@@ -4,6 +4,10 @@
   "description": "Tool for learning while watching",
   "version": "1.0",
 
+  "background": {
+    "service_worker": "worker/worker.js"
+  },
+
   "action": {
     "default_popup": "logo/default_popup.html",
     "default_icon": "logo/default_img.png"
@@ -13,7 +17,8 @@
 
   "content_scripts": [
     {
-      "js": ["hover/hover.js", "logo/popup.js"],
+      "html": ["config_page/config_page.html"],
+      "js": ["hover/hover.js", "logo/popup.js", "config_page/config_page.js"],
       "css": ["hover/hover.css"],
       "matches":
       [
