@@ -2,10 +2,13 @@ import asyncio
 import logging
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.types import ParseMode
 
 from filters.admins import AdminFilter
-from handlers.admins import register_admins
+from handlers.admins import register_admins, notify
+from handlers.users import register_users
 from tg_bot.config import load_config
+from utils.db_api.postgres import Database
 
 
 logger = logging.getLogger(__name__)
@@ -15,6 +18,7 @@ def register_filters(dp: Dispatcher):
 
 def register_handlers(dp: Dispatcher):
     register_admins(dp)
+    register_users(dp)
 
 async def main():
     logging.basicConfig(
@@ -22,10 +26,17 @@ async def main():
         format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
     )
     config = load_config(".env")
-    bot = Bot(token=config.tg_bot.token, parse_mode="HTML")
+    bot = Bot(token=config.tg_bot.token, parse_mode=ParseMode.HTML)
+    bot['config'] = config
     storage = MemoryStorage()
     dp = Dispatcher(bot, storage=storage)
-    bot['config'] = config
+    await notify(dp)
+
+    db = Database(config)
+    #logging.info("Connecting to database...")
+    #await db.create()
+    #logging.info("Creating Users table...")
+    #await db.create_users_table()
 
     register_filters(dp)
     register_handlers(dp)
