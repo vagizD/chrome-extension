@@ -2,7 +2,7 @@ function getWordUnderCursor(e) {
     var range, textNode, offset;
 
     if (document.caretRangeFromPoint) {     // Chrome
-        range = document.caretRangeFromPoint(e.clientX, e.clientY);
+        range = document.caretRangeFromPoint(e.detail.clientX, e.detail.clientY);
         textNode = range.startContainer;
         offset = range.startOffset;
     }
@@ -10,7 +10,7 @@ function getWordUnderCursor(e) {
         i = offset,
         begin,
         end;
-    if(data !== undefined) {
+    if (data !== undefined) {
         while (i > 0 && data[i] !== " ") {
             --i;
         }
@@ -20,39 +20,10 @@ function getWordUnderCursor(e) {
             ++i;
         }
         end = i;
-
+        console.log(data.substring(begin, end));
         return data.substring(begin, end);
-    }
-    else {
-        return "Oops..."
-    }
-}
-function getWords() {
-    var selected = window.getSelection()
-    if(selected.rangeCount > 0) {
-        var range = selected.getRangeAt(0).cloneRange()
-
-        if (range.startOffset === range.endOffset) {
-            let startWord;
-            let endWord;
-            startWord = (r) => r.toString().match(/^\s/)
-            endWord = (r) => r.toString().match(/\s$/)
-
-            while (!startWord(range) && range.startOffset > 0) {
-                range.setStart(range.startContainer, range.startOffset - 1)
-            }
-            if (startWord(range)) range.setStart(range.startContainer, range.startOffset + 1)
-
-            var length = range.endContainer.length || range.endContainer.childNodes.length
-            while (!endWord(range) && range.endOffset < length) {
-                range.setEnd(range.endContainer, range.endOffset + 1)
-            }
-            if (endWord(range) && range.endOffset > 0) range.setEnd(range.endContainer, range.endOffset - 1)
-
-        }
-        return range.toString()
-    }
-    else {
+    } else {
+        console.log("Oops...");
         return "Oops..."
     }
 }
@@ -95,7 +66,7 @@ function getCount(el) {
 
 var makeHover = async function(e) {
 
-    var target = e.target;
+    var target = e.detail.target;
 
     if (target.textContent) {
 
@@ -124,15 +95,29 @@ var makeHover = async function(e) {
     }
 }
 
-
-
 var MVC = 'tooltip';
 
 var prevDom = null;
 var prevSpan = null;
 
-setInterval(() => {
-    document.addEventListener('click', makeHover, {once: true})
-}, 0)
+(function (mouseStopDelay) {
+    var timer;
+    document.addEventListener('mousemove', function (e) {
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+            var event = new CustomEvent("mousestop", {
+                detail: {
+                    clientX: e.clientX,
+                    clientY: e.clientY,
+                    target: e.target
+                },
+                bubbles: true,
+                cancelable: true,
+                composed: true
+            });
+            e.target.dispatchEvent(event);
+        }, mouseStopDelay);
+    });
+}(1000));
 
-
+document.addEventListener('mousestop', makeHover);
