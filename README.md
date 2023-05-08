@@ -1,5 +1,6 @@
-CHROME EXTENSION
+## CHROME EXTENSION
 
-24.02 - read Chrome Extension Docs and be aware of what extension is and briefly how does it work.
-
-+- 28.02 - push some code to repo (server part, get think of NoSQL database to store words of users, start writing JS script to parse subtitles)
+TODO:
+1) Automized receive of Yandex token.
+2) Create session and queue of words in it.
+3) Change logic of word remember: button-click on translation.

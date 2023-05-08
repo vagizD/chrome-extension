@@ -83,7 +83,7 @@ var makeHover = async function(e) {
         var result = await postTranslation(word);
         if (result !== 'Oops...') {
 
-            span.appendChild(document.createTextNode("Word was founded: " + result));
+            span.appendChild(document.createTextNode("Translated word:" + word + " -> " + result));
 
             target.classList.add(MVC);
             target.appendChild(span);

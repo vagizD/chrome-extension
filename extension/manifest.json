@@ -19,7 +19,7 @@
     {
       "html": ["config_page/config_page.html"],
       "js": ["hover/hover.js", "logo/popup.js", "config_page/config_page.js"],
-      "css": ["hover/hover.css"],
+      "css": ["hover/hover.css", "config_page/config_page.css"],
       "matches":
       [
         "http://*/*",

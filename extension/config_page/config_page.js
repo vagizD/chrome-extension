@@ -11,7 +11,7 @@ chrome.identity.getProfileUserInfo({'accountStatus': 'ANY'}, function (info) {
 })
 
 // request to update info about user
-async function postTag(){
+async function postTag() {
     const response = await fetch("http://localhost:8000/api/totag", {
         method: "POST",
         headers: {"Accept": "application/json", "Content-Type": "application/json"},

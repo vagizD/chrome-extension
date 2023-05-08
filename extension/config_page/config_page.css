@@ -1,0 +1,13 @@
+input[type="text"]::placeholder {
+  color: gray;
+  font-style: italic;
+}
+.outerDiv {
+  border: 5px outset red;
+  background-color: lightblue;
+  text-align: center;
+}
+.innerDiv {
+  background-color: lightblue;
+  text-align: center;
+}

@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+<link rel="stylesheet" href="config_page.css">
 <head>
     <meta charset="UTF-8">
-    <title>Settings config</title>
+    <title>Settings page</title>
 </head>
-<style>
-    .myDiv {
-  border: 5px outset red;
-  background-color: lightblue;
-  text-align: center;
-}
-</style>
 <body>
-    <div class="myDiv">
-        <p>Your Telegram tag:</p>
-        <input class="tg-tag" value="@your_tag" required id="tg-tag">
-        <button class="tg-tag-submit-button" type="submit">Update tag</button>
+    <div class="outerDiv">
+        <h2 class="innerDiv">
+            <p>Main configurations</p>
+        </h2>
+        <div class="innerDiv">
+            <label for="tg-tag">Your Telegram tag:</label>
+            <input class="tg-tag" required id="tg-tag" placeholder="@your_tag">
+            <button class="tg-tag-submit-button" type="submit">Update tag</button>
+        </div>
     </div>
     <script  src="./config_page.js" type="module"></script>
 </body>
