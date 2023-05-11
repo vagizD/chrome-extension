@@ -38,8 +38,8 @@ async function postTranslation(line){
     });
     if(response.ok === true) {
         const new_word = await response.json();
-        console.log(new_word["word"].toString())
-        return new_word["word"];
+        console.log(new_word["translation"].toString())
+        return new_word["translation"];
     }
     else {
         const error = await response.json();

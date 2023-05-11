@@ -50,7 +50,9 @@ def transRequest(data=Body()):
                              headers=config.headers)
     texts.pop(0)
     dict_response = json.loads(response.text)
-    data["word"] = dict_response['translations'][0]['text']
+    print(dict_response)
+    # data["word"] = dict_response['translations'][0]['text']
+    data.update({"translation": dict_response['translations'][0]['text']})
 
     print(data)
 
