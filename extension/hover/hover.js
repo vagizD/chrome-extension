@@ -10,7 +10,7 @@ function getWordUnderCursor(e) {
         i = offset,
         begin,
         end;
-    if (data !== undefined) {
+    if ((typeof data) === "string") {
         while (i > 0 && data[i] !== " ") {
             --i;
         }
@@ -31,7 +31,7 @@ function getWordUnderCursor(e) {
 async function postTranslation(line){
     const response = await fetch("http://localhost:8000/api/totrans", {
         method: "POST",
-        headers: {"Accept": "application/json", "Content-Type": "application/json"},
+        headers: {"Accept": "application/json", "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'},
         body: JSON.stringify({
             word: line
         })
@@ -77,11 +77,14 @@ var makeHover = async function(e) {
             prevDom.removeChild(prevSpan);
         }
 
+
         const span = await document.createElement('span');
         span.classList.add('tooltiptext');
+        span.style.left = e.detail.clientX - 335 + 'px';
+        span.style.top = e.detail.clientY - 155 + 'px';
         var word = await getWordUnderCursor(e);
         var result = await postTranslation(word);
-        if (result !== 'Oops...') {
+        if (word !== 'Oops...') {
 
             span.appendChild(document.createTextNode("Translated word:" + word + " -> " + result));
 
@@ -109,6 +112,8 @@ var prevSpan = null;
                 detail: {
                     clientX: e.clientX,
                     clientY: e.clientY,
+                    pageX: e.pageX,
+                    pageY: e.pageY,
                     target: e.target
                 },
                 bubbles: true,

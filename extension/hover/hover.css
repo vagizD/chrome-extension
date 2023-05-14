@@ -12,7 +12,8 @@
   visibility: hidden;
   width: 120px;
   font-size: 14px;
-  left: 50%;
+  top: 0;
+  left: 0;
   margin-left: -60px;
   background-color: black;
   color: #fff;
