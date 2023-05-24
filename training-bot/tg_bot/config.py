@@ -9,7 +9,7 @@ class TgBot:
     admins: List[int]
 
 @dataclass
-class Database:
+class DB:
     host: str
     password: str
     user: str
@@ -22,7 +22,7 @@ class Miscellaneous:
 @dataclass
 class Config:
     tg_bot: TgBot
-    db: Database
+    db: DB
     misc: Miscellaneous
 
 
@@ -34,7 +34,7 @@ def load_config(path: str = None) -> Config:
             token=env.str("BOT_TOKEN"),
             admins=list(map(int, env.list("ADMINS")))
         ),
-        db=Database(
+        db=DB(
             host=env.str("DB_HOST"),
             password=env.str("DB_PASSWORD"),
             user=env.str("DB_USER"),

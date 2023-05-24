@@ -1,12 +1,12 @@
 from aiogram import Dispatcher
 from aiogram.types import Message
 
-async def registered(user_id: int) -> bool:
-    users =  [] # find user_id in database
-    return user_id in users
-
 async def start(message: Message):
     bot = message.bot
+    async def registered(user_id: int) -> bool:
+        db = bot.get("database")
+        return await db.select_user(tg_id=user_id) is not None
+
     if await registered(message.from_id):
         message_text = f"Hello, <b>{message.from_user.first_name}!</b>\n\n" \
                        f"What are we going to do today?"

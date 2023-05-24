@@ -1,23 +1,19 @@
-import logging
 from typing import Union
 
 import asyncpg
-from asyncpg import Pool, Connection
-from config import Config
 
 class Database:
 
-    def  __init__(self, config: Config):
-        self.pool: Union[Pool, None] = None
-        self.config = config
+    def  __init__(self, config):
+        self.pool: Union[asyncpg.Pool, None] = None
+        self.config = config.db
 
     async def create(self):
-        logging.info(f"{self.config.db.user} connecting")
         self.pool = await asyncpg.create_pool(
-            user=self.config.db.user,
-            password=self.config.db.password,
-            host=self.config.db.host,
-            database=self.config.db.database
+            user=self.config.user,
+            password=self.config.password,
+            host=self.config.host,
+            database=self.config.database
         )
 
     async def execute(self, command: str, *args,
@@ -28,7 +24,7 @@ class Database:
                       ):
 
         async with self.pool.acquire() as connection:
-            connection: Connection
+            connection: asyncpg.Connection
             async with connection.transaction():
                 if fetch:
                     result = await connection.fetch(command, *args)
@@ -48,24 +44,23 @@ class Database:
         return query, tuple(params.values())
 
     async def create_users_table(self):
-        query = """
-        CREATE TABLE IF NOT EXISTS Users (
-        id SERIAL PRIMARY KEY,
-        gmail VARCHAR(255) NOT NULL,
-        telegram_id VARCHAR(255) NULL
-        );
-        """
+        query = ("CREATE TABLE IF NOT EXISTS Users ("
+                 "id SERIAL PRIMARY KEY,"
+                 "gmail VARCHAR(255) NOT NULL,"
+                 "tg_id BIGINT);")
         await self.execute(query, execute=True)
 
-    async def get_users(self):
-        query = "SELECT * FROM Users"
-        return await self.execute(query, fetch=True)
+    async def add_user(self, gmail, tg_id):
+        query = "INSERT INTO Users (gmail, tg_id) VALUES($1, $2) returning *"
+        return await self.execute(query, gmail, tg_id, fetchrow=True)
+
+    async def select_user(self, **kwargs):
+        query = "SELECT * FROM Users WHERE "
+        query, params = self.format_args(query, params=kwargs)
+        return await self.execute(query, *params, fetchrow=True)
 
     async def count_users(self):
         query = "SELECT COUNT(*) FROM Users"
         return await self.execute(query, fetchval=True)
 
-    async def add_user(self, gmail: str, telegram_id: str):
-        query = "INSERT INTO users (gmail, telegram_id) VALUES ($1, $2) returning *"
-        return await self.execute(query, gmail, telegram_id, fetchrow=True)
 

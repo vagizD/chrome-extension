@@ -3,10 +3,9 @@ import logging
 from aiogram import Dispatcher
 from aiogram.types import Message
 
-from config import Config
 
 async def notify(dp: Dispatcher):
-    config: Config = dp.bot.get("config")
+    config = dp.bot.get("config")
     for admin in config.tg_bot.admins:
         try:
             await dp.bot.send_message(admin, "Bot is running")

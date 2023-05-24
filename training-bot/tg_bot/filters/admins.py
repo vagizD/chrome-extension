@@ -1,7 +1,7 @@
 from typing import Union
 
 from aiogram.dispatcher.filters import BoundFilter
-import config
+from ..config import Config
 class AdminFilter(BoundFilter):
 
     key = 'is_admin'
@@ -13,5 +13,5 @@ class AdminFilter(BoundFilter):
             return
         if not self.is_admin:
             return False
-        conf: config.Config = obj.bot.get('config')
+        conf: Config = obj.bot.get('config')
         return obj.chat.id in conf.tg_bot.admins

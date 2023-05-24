@@ -4,11 +4,11 @@ from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.types import ParseMode
 
-from filters.admins import AdminFilter
-from handlers.admins import register_admins, notify
-from handlers.users import register_users
+from tg_bot.filters.admins import AdminFilter
+from tg_bot.handlers.admins import register_admins, notify
+from tg_bot.handlers.users import register_users
 from tg_bot.config import load_config
-from utils.db_api.postgres import Database
+from tg_bot.utils.db_api.postgres import Database
 
 
 logger = logging.getLogger(__name__)
@@ -33,10 +33,11 @@ async def main():
     await notify(dp)
 
     db = Database(config)
-    #logging.info("Connecting to database...")
-    #await db.create()
-    #logging.info("Creating Users table...")
-    #await db.create_users_table()
+    bot['database'] = db
+    logging.info(f"{db.config.user} connecting to {db.config.host}...")
+    await db.create()
+    logging.info("Creating Users table...")
+    await db.create_users_table()
 
     register_filters(dp)
     register_handlers(dp)
