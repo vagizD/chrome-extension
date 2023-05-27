@@ -45,22 +45,47 @@ class Database:
 
     async def create_users_table(self):
         query = ("CREATE TABLE IF NOT EXISTS Users ("
-                 "id SERIAL PRIMARY KEY,"
-                 "gmail VARCHAR(255) NOT NULL,"
+                 "user_id SERIAL PRIMARY KEY,"
+                 "gmail VARCHAR(320) NOT NULL,"
                  "tg_id BIGINT);")
         await self.execute(query, execute=True)
 
-    async def add_user(self, gmail, tg_id):
-        query = "INSERT INTO Users (gmail, tg_id) VALUES($1, $2) returning *"
-        return await self.execute(query, gmail, tg_id, fetchrow=True)
+    async def create_words_table(self):
+        query = ("CREATE TABLE IF NOT EXISTS Words ("
+                 "word_id SERIAL PRIMARY KEY,"
+                 "owner_id SERIAL REFERENCES Users(user_id) NOT NULL,"
+                 "word VARCHAR(40),"
+                 "trans VARCHAR(40),"
+                 "trained BOOLEAN NOT NULL);")
+        await self.execute(query, execute=True)
 
-    async def select_user(self, **kwargs):
+    async def get_user(self, **kwargs):
         query = "SELECT * FROM Users WHERE "
         query, params = self.format_args(query, params=kwargs)
         return await self.execute(query, *params, fetchrow=True)
 
-    async def count_users(self):
-        query = "SELECT COUNT(*) FROM Users"
+    async def count_user_trained_words(self, owner_id: int):
+        query = f"SELECT COUNT(*) AS WORD_COUNT FROM Words WHERE owner_id = {owner_id} AND trained = true"
         return await self.execute(query, fetchval=True)
+
+    async def get_user_trained_words(self, owner_id: int):
+        query = f"SELECT * FROM Words WHERE owner_id = {owner_id} AND trained = true"
+        return await self.execute(query, fetch=True)
+
+    async def count_user_not_trained_words(self, owner_id: int):
+        query = f"SELECT COUNT(*) AS WORD_COUNT FROM Words WHERE owner_id = {owner_id} AND trained = false"
+        return await self.execute(query, fetchval=True)
+
+    async def get_user_not_trained_words(self, owner_id: int):
+        query = f"SELECT * FROM Words WHERE owner_id = {owner_id} AND trained = false"
+        return await self.execute(query, fetch=True)
+
+    async def add_user(self, gmail, tg_id): # TODO: REMOVE AFTER TESTS
+        query = "INSERT INTO Users (gmail, tg_id) VALUES($1, $2) returning *"
+        return await self.execute(query, gmail, tg_id, fetchrow=True)
+
+    async def add_word(self, owner_id, word, trans): # TODO: REMOVE AFTER TESTS
+        query = "INSERT INTO Words (owner_id, word, trans, trained) VALUES($1, $2, $3, $4)"
+        return await self.execute(query, owner_id, word, trans, False, execute=True)
 
 

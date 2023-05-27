@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import sys, os
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.types import ParseMode
@@ -7,24 +8,25 @@ from aiogram.types import ParseMode
 from tg_bot.filters.admins import AdminFilter
 from tg_bot.handlers.admins import register_admins, notify
 from tg_bot.handlers.users import register_users
+from tg_bot.handlers.added_words import register_added_words
 from tg_bot.config import load_config
 from tg_bot.utils.db_api.postgres import Database
 
 
-logger = logging.getLogger(__name__)
+logging.basicConfig(
+        level=logging.INFO,
+        format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
+    )
 
 def register_filters(dp: Dispatcher):
     dp.filters_factory.bind(AdminFilter)
 
 def register_handlers(dp: Dispatcher):
-    register_admins(dp)
     register_users(dp)
+    register_admins(dp)
+    register_added_words(dp)
 
 async def main():
-    logging.basicConfig(
-        level=logging.INFO,
-        format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
-    )
     config = load_config(".env")
     bot = Bot(token=config.tg_bot.token, parse_mode=ParseMode.HTML)
     bot['config'] = config
@@ -38,6 +40,8 @@ async def main():
     await db.create()
     logging.info("Creating Users table...")
     await db.create_users_table()
+    logging.info("Creating Words table...")
+    await db.create_words_table()
 
     register_filters(dp)
     register_handlers(dp)
@@ -54,4 +58,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except (KeyboardInterrupt, SystemExit):
-        logger.error("Stopped.")
+        logging.error("Stopped.")
