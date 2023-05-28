@@ -125,27 +125,23 @@ var makeHover = async function(e) {
 
     if (target.textContent) {
 
-        if (prevDom !== null && prevSpan !== null) {
-            console.log(prevDom);
-            console.log(prevDom.className)
-            prevDom.classList.remove(MVC);
-            prevDom.removeChild(prevSpan);
-        }
-
-
-        const span = await document.createElement('span');
-        span.classList.add('tooltiptext');
-
-        //span.style.left = e.detail.pageX - 335 + "px"; //- 335 + 'px';
-        //span.style.top = e.detail.pageY - 155 + "px"; //- 155 + 'px';
-
-        span.style.left = `${e.detail.clientX+10}px`;
-        span.style.top = `${e.detail.clientY+10}px`;
-
-
         var word_and_sentence = await getWordUnderCursor(e);
-        //var result = await postTranslation(word_and_sentence);
+
         if (word_and_sentence[0] !== 'Oops...' && word_and_sentence[0].length > 0) {
+
+            if (prevDom !== null && prevSpan !== null) {
+                console.log(prevDom);
+                console.log(prevDom.className)
+                prevDom.classList.remove(MVC);
+                prevDom.removeChild(prevSpan);
+            }
+
+            const span = await document.createElement('span');
+            span.classList.add('tooltiptext');
+
+            span.style.left = `${e.detail.clientX+10}px`;
+            span.style.top = `${e.detail.clientY+10}px`;
+
             var result = await postTranslation(word_and_sentence);
             span.appendChild(document.createTextNode("Translated word: " + word_and_sentence[0] + " -> " + result));
 
