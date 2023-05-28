@@ -9,22 +9,76 @@ function getWordUnderCursor(e) {
     var data = textNode.data,
         i = offset,
         begin,
-        end;
+        end,
+        big_begin,
+        big_end;
     if ((typeof data) === "string") {
+        console.log(data);
         while (i > 0 && data[i] !== " ") {
             --i;
+            //console.log(data[i])
         }
         begin = i;
+        big_begin = begin+1;
+
         i = offset;
         while (i < data.length && data[i] !== " ") {
             ++i;
         }
         end = i;
-        console.log(data.substring(begin, end));
-        return data.substring(begin, end);
+        big_end = end-1;
+
+        if(data[begin] === " ") {
+            begin++;
+        }
+        var code = data.charCodeAt(big_begin);
+        while (big_begin >= 0){
+            if(((code >= 33 && code <= 47) || (code >= 58 && code <= 64) || (code <= 95 && code >= 91) || (code <= 126 && code >= 123)) && (code !== 39 || code !== 45)){
+                big_begin++;
+                break;
+            }
+            big_begin--;
+            code = data.charCodeAt(big_begin);
+        }
+        code = data.charCodeAt(big_end);
+        while (big_end < data.length){
+            if(((code >= 33 && code <= 47) || (code >= 58 && code <= 64) || (code <= 95 && code >= 91) || (code <= 126 && code >= 123)) && (code !== 39 || code !== 45)){
+                break
+            }
+            //console.log(code);
+            big_end++;
+            code = data.charCodeAt(big_end);
+        }
+        var context = data.substring(big_begin, big_end).toString();
+        context = context.trim();
+        console.log(context);
+        var result = data.substring(begin, end).toString();
+        var j = 0;
+        begin = 0;
+        i = result.length;
+        end = result.length;
+        while (j < i){
+            var code_front = result.charCodeAt(j);
+            var code_back = result.charCodeAt(i);
+            if(((code_front <= 64 && code_front >= 33) || (code_front <= 95 && code_front >= 91) || (code_front <= 126 && code_front >= 123)) && (code_front !== 39 || code_front !== 45)){
+                begin = ++j;
+            }
+            else{
+                ++j;
+            }
+            if(((code_back <= 64 && code_back >= 33) || (code_back <= 95 && code_back >= 91) || (code_back <= 126 && code_back >= 123)) && (code_back !== 39 || code_back !== 45)){
+                end = i--;
+            }
+            else{
+                i--;
+            }
+        }
+        result = result.substring(begin, end).trim();
+        console.log(result);
+        return [result, context];
     } else {
         console.log("Oops...");
-        return "Oops..."
+        return ["Oops...", "Oops..."]
     }
 }
 
@@ -33,7 +87,8 @@ async function postTranslation(line){
         method: "POST",
         headers: {"Accept": "application/json", "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'},
         body: JSON.stringify({
-            word: line
+            word: line[0],
+            context: line[1]
         })
     });
     if(response.ok === true) {
@@ -70,7 +125,7 @@ var makeHover = async function(e) {
 
     if (target.textContent) {
 
-        if (prevDom !== null) {
+        if (prevDom !== null && prevSpan !== null) {
             console.log(prevDom);
             console.log(prevDom.className)
             prevDom.classList.remove(MVC);
@@ -80,13 +135,19 @@ var makeHover = async function(e) {
 
         const span = await document.createElement('span');
         span.classList.add('tooltiptext');
-        span.style.left = e.detail.clientX - 335 + 'px';
-        span.style.top = e.detail.clientY - 155 + 'px';
-        var word = await getWordUnderCursor(e);
-        var result = await postTranslation(word);
-        if (word !== 'Oops...') {
 
-            span.appendChild(document.createTextNode("Translated word:" + word + " -> " + result));
+        //span.style.left = e.detail.pageX - 335 + "px"; //- 335 + 'px';
+        //span.style.top = e.detail.pageY - 155 + "px"; //- 155 + 'px';
+
+        span.style.left = `${e.detail.clientX+10}px`;
+        span.style.top = `${e.detail.clientY+10}px`;
+
+
+        var word_and_sentence = await getWordUnderCursor(e);
+        //var result = await postTranslation(word_and_sentence);
+        if (word_and_sentence[0] !== 'Oops...' && word_and_sentence[0].length > 0) {
+            var result = await postTranslation(word_and_sentence);
+            span.appendChild(document.createTextNode("Translated word: " + word_and_sentence[0] + " -> " + result));
 
             target.classList.add(MVC);
             target.appendChild(span);
@@ -114,7 +175,13 @@ var prevSpan = null;
                     clientY: e.clientY,
                     pageX: e.pageX,
                     pageY: e.pageY,
-                    target: e.target
+                    offsetX: e.offsetX,
+                    offsetY: e.offsetY,
+                    screenX: e.screenX,
+                    screenY: e.screenY,
+                    target: e.target,
+                    x: e.x,
+                    y: e.y
                 },
                 bubbles: true,
                 cancelable: true,
