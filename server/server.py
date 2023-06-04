@@ -7,8 +7,11 @@ import multiprocessing
 from update_token import initiate_token_loop
 from logs.logs import logging_config
 from config import config
+
 from fastapi import FastAPI, Body
 from fastapi.middleware.cors import CORSMiddleware
+
+from queries import process_tag, process_word
 
 logging.basicConfig(**logging_config)
 logger = logging.getLogger('server')
@@ -36,36 +39,40 @@ app.add_middleware(
 
 @app.post("/api/to_trans")
 def transRequest(data=Body()):
+    logger.debug("New translation request.")
+
     texts.append(data["word"])
     response = requests.post('https://translate.api.cloud.yandex.net/translate/v2/translate',
                              json=body,
                              headers=config.headers)
     texts.pop(0)
     dict_response = json.loads(response.text)
-    # print(dict_response)
 
     if dict_response.get("translations", None) is not None:
         data.update({"translation": dict_response['translations'][0]['text']})
     else:
         data.update({"translation": "No translation found."})
 
-    # print(data)
-
     return data
 
 
 @app.post("/api/to_tag")
 def tagRequest(data=Body()):
-    print(data)
-    return data
+    logger.debug(f"New tag request.")
+
+    status = process_tag(data)
+
+    return {"status": status}
 
 
 @app.post("/api/add_word")
 def addWord(data=Body()):
     data["context"] = json.loads(data["context"])
 
+    status = process_word(data)
+
     print(data)
-    return data
+    return {"status": status}
 
 
 if __name__ == '__main__':

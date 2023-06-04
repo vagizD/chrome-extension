@@ -35,9 +35,9 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                     method: "POST",
                     headers: {"Accept": "application/json", "Content-Type": "application/json"},
                     body: JSON.stringify({
+                        gmail: userInfo[0]["email"],
                         tg_tag: request["tag"],
-                        email: userInfo[0]["email"],
-                        id: userInfo[0]["id"]
+                        google_id: userInfo[0]["id"]
                     })
                 });
             })
