@@ -4,14 +4,11 @@ import requests
 import uvicorn
 import multiprocessing
 
-from dotenv import load_dotenv
 from update_token import initiate_token_loop
 from logs.logs import logging_config
 from config import config
 from fastapi import FastAPI, Body
 from fastapi.middleware.cors import CORSMiddleware
-
-load_dotenv()
 
 logging.basicConfig(**logging_config)
 logger = logging.getLogger('server')
@@ -37,12 +34,7 @@ app.add_middleware(
 )
 
 
-@app.get("/api/gettrans")
-def transResponse(data=Body()):
-    ...
-
-
-@app.post("/api/totrans")
+@app.post("/api/to_trans")
 def transRequest(data=Body()):
     texts.append(data["word"])
     response = requests.post('https://translate.api.cloud.yandex.net/translate/v2/translate',
@@ -50,17 +42,28 @@ def transRequest(data=Body()):
                              headers=config.headers)
     texts.pop(0)
     dict_response = json.loads(response.text)
-    print(dict_response)
-    # data["word"] = dict_response['translations'][0]['text']
-    data.update({"translation": dict_response['translations'][0]['text']})
+    # print(dict_response)
 
-    print(data)
+    if dict_response.get("translations", None) is not None:
+        data.update({"translation": dict_response['translations'][0]['text']})
+    else:
+        data.update({"translation": "No translation found."})
+
+    # print(data)
 
     return data
 
 
-@app.post("/api/totag")
+@app.post("/api/to_tag")
 def tagRequest(data=Body()):
+    print(data)
+    return data
+
+
+@app.post("/api/add_word")
+def addWord(data=Body()):
+    data["context"] = json.loads(data["context"])
+
     print(data)
     return data
 

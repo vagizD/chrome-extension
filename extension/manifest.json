@@ -13,13 +13,20 @@
     "default_icon": "logo/default_img.png"
   },
 
-  "permissions": ["scripting", "identity", "identity.email"],
+  "permissions": ["scripting", "identity", "identity.email", "tabs"],
 
   "content_scripts": [
     {
       "html": ["config_page/config_page.html"],
-      "js": ["hover/hover.js", "logo/popup.js", "config_page/config_page.js"],
-      "css": ["hover/hover.css", "config_page/config_page.css"],
+
+      "js": ["functionality/hover/hover.js",
+             "logo/popup.js",
+             "config_page/config_page.js"],
+
+      "css": ["functionality/hover/hover.css",
+              "config_page/config_page.css",
+              "functionality/plus_button/plus_button.css"],
+
       "matches":
       [
         "http://*/*",

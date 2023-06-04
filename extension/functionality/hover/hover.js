@@ -83,9 +83,12 @@ function getWordUnderCursor(e) {
 }
 
 async function postTranslation(line){
-    const response = await fetch("http://localhost:8000/api/totrans", {
+    const response = await fetch("http://localhost:8000/api/to_trans", {
         method: "POST",
-        headers: {"Accept": "application/json", "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'},
+        headers: {"Accept": "application/json",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"},
         body: JSON.stringify({
             word: line[0],
             context: line[1]
@@ -102,21 +105,28 @@ async function postTranslation(line){
     }
 }
 
-function getText(el) {
-    let ret = "";
-    var length = el.childNodes.length;
-    for(var i = 0; i < length; i++) {
-        var node = el.childNodes[i];
-        if(node.nodeType !== 8) {
-            ret += node.nodeType !== 1 ? node.nodeValue : getText(node);
-        }
-    }
-    return ret;
+async function postWord(word_and_sentence) {
+    let website = location.href;
+    chrome.runtime.sendMessage({type: 'postWord', word_and_sentence: word_and_sentence, website: website})
 }
 
-function getCount(el) {
-    var words = getText(el);
-    return words.split(' ').length;
+async function add_plus_button(node, word_and_sentence) {
+	const button = await document.createElement('button');
+
+    button.classList.add('c-button-reset');
+    button.classList.add('c-plus-to-check');
+
+	button.addEventListener('click', function(event) {
+        if (this.getAttribute('data-state') === 'active') {
+            return;
+        }
+		this.setAttribute('data-state', 'active');
+		event.preventDefault();
+
+        postWord(word_and_sentence);
+	});
+
+	node.appendChild(button);
 }
 
 var makeHover = async function(e) {
@@ -139,11 +149,15 @@ var makeHover = async function(e) {
             const span = await document.createElement('span');
             span.classList.add('tooltiptext');
 
+            await add_plus_button(span, word_and_sentence);
+
             span.style.left = `${e.detail.clientX+10}px`;
             span.style.top = `${e.detail.clientY+10}px`;
 
             var result = await postTranslation(word_and_sentence);
-            span.appendChild(document.createTextNode("Translated word: " + word_and_sentence[0] + " -> " + result));
+            span.appendChild(document.createTextNode("Translated word:"));
+            span.appendChild(document.createElement('br'));
+            span.appendChild(document.createTextNode(word_and_sentence[0] + " -> " + result));
 
             target.classList.add(MVC);
             target.appendChild(span);

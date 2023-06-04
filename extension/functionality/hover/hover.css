@@ -1,3 +1,4 @@
+@import "../plus_button/plus_button.css";
 
 .crx_mouse_visited {
   background-color: #bcd5eb;
@@ -10,7 +11,8 @@
 
 .tooltip .tooltiptext {
   visibility: hidden;
-  width: 120px;
+  width: 170px;
+  height: 70px;
   font-size: 14px;
   margin-left: -60px;
   background-color: black;

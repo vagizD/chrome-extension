@@ -7,7 +7,63 @@ chrome.runtime.onInstalled.addListener(function(details) {
             {url: config_page_url, active: true},
             function(tab) {  // log
                 console.log("Config page opened.")
+                return tab;
             }
         )
     }
 })
+
+function getCredsPromise() {
+    return new Promise(function(resolve, reject) {
+        chrome.identity.getProfileUserInfo({'accountStatus': 'ANY'}, function (info) {
+            resolve(info);
+        });
+    })
+}
+
+chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+    console.log(request.type)
+
+    switch (request.type) {
+        case 'postTag':
+
+            var creds = getCredsPromise();
+
+            Promise.all([creds]).then(function(userInfo) {
+                console.log(userInfo);
+                const response = fetch("http://localhost:8000/api/to_tag", {
+                    method: "POST",
+                    headers: {"Accept": "application/json", "Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        tg_tag: request["tag"],
+                        email: userInfo[0]["email"],
+                        id: userInfo[0]["id"]
+                    })
+                });
+            })
+            break;
+
+        case 'postWord':
+
+            var creds = getCredsPromise();
+
+            Promise.all([creds]).then(function(userInfo) {
+                const response = fetch("http://localhost:8000/api/add_word", {
+                    method: "POST",
+                    headers: {"Accept": "application/json",
+                        "Content-Type": "application/json",
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"},
+                    body: JSON.stringify({
+                        id: userInfo[0]["id"],
+                        word: request["word_and_sentence"][0],
+                        context: JSON.stringify(
+                            {sentence: request["word_and_sentence"][1],
+                            website: request["website"]})
+                    })
+                });
+            })
+    }
+})
+
+
