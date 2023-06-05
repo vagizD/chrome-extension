@@ -8,6 +8,7 @@ from aiogram.types import ParseMode
 from tg_bot.filters.admins import AdminFilter
 from tg_bot.handlers.admins import register_admins, notify
 from tg_bot.handlers.users import register_users
+from tg_bot.handlers.trainings import register_training
 from tg_bot.handlers.added_words import register_added_words
 from tg_bot.config import load_config
 from tg_bot.utils.db_api.postgres import Database
@@ -25,6 +26,7 @@ def register_handlers(dp: Dispatcher):
     register_users(dp)
     register_admins(dp)
     register_added_words(dp)
+    register_training(dp)
 
 async def main():
     config = load_config(".env")

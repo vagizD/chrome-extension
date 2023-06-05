@@ -1,26 +1,26 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
-words_type_choice_keyboard = InlineKeyboardMarkup(row_width=1,
+words_choice = InlineKeyboardMarkup(row_width=1,
                                                   inline_keyboard=[
                                                       [
                                                           InlineKeyboardButton(text="Выученные",
-                                                                               callback_data="trained_words")
+                                                                               callback_data="trained")
                                                       ],
                                                       [
                                                           InlineKeyboardButton(text="Невыученные",
-                                                                               callback_data="not_trained_words")
+                                                                               callback_data="not_trained")
                                                       ],
                                                       [
-                                                          InlineKeyboardButton(text="Назад",
-                                                                               callback_data="back_to_menu")
+                                                          InlineKeyboardButton(text="◄ Назад",
+                                                                               callback_data="to_menu")
                                                       ]
                                                   ])
 
-back_to_choice_keyboard = InlineKeyboardMarkup(row_width=1,
+to_words_choice = InlineKeyboardMarkup(row_width=1,
                                                inline_keyboard=[
                                                    [
-                                                       InlineKeyboardButton(text="Назад",
-                                                                            callback_data="back_to_choice")
+                                                       InlineKeyboardButton(text="◄ Назад",
+                                                                            callback_data="to_words_choice")
                                                    ]
                                                ])

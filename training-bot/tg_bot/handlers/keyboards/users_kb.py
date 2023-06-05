@@ -1,16 +1,16 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
-check_register_keyboard = InlineKeyboardMarkup(row_width=1,
+check_registry = InlineKeyboardMarkup(row_width=1,
                                       inline_keyboard=[
                                           [
                                               InlineKeyboardButton(text="Проверить регистрацию",
-                                                                   callback_data="check_register")
+                                                                   callback_data="check_registry")
                                           ]
                                       ])
 
 
-menu_keyboard = InlineKeyboardMarkup(row_width=1,
+menu_choice = InlineKeyboardMarkup(row_width=1,
                                      inline_keyboard=[
                                          [
                                             InlineKeyboardButton(text="Тренироваться", callback_data="train")
@@ -26,9 +26,9 @@ menu_keyboard = InlineKeyboardMarkup(row_width=1,
                                          ]
                                      ])
 
-back_to_menu_keyboard = InlineKeyboardMarkup(row_width=1,
+to_menu = InlineKeyboardMarkup(row_width=1,
                                              inline_keyboard=[
                                                  [
-                                                     InlineKeyboardButton(text="Назад", callback_data="back_to_menu")
+                                                     InlineKeyboardButton(text="◄ Назад", callback_data="to_menu")
                                                  ]
                                              ])
