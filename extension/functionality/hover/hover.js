@@ -105,12 +105,13 @@ async function postTranslation(line){
     }
 }
 
-async function postWord(word_and_sentence) {
+async function postWord(word_and_sentence, translation) {
     let website = location.href;
-    chrome.runtime.sendMessage({type: 'postWord', word_and_sentence: word_and_sentence, website: website})
+    chrome.runtime.sendMessage({type: 'postWord',
+        word_and_sentence: word_and_sentence, website: website, translation: translation})
 }
 
-async function add_plus_button(node, word_and_sentence) {
+async function add_plus_button(node, word_and_sentence, translation) {
 	const button = await document.createElement('button');
 
     button.classList.add('c-button-reset');
@@ -123,7 +124,7 @@ async function add_plus_button(node, word_and_sentence) {
 		this.setAttribute('data-state', 'active');
 		event.preventDefault();
 
-        postWord(word_and_sentence);
+        postWord(word_and_sentence, translation);
 	});
 
 	node.appendChild(button);
@@ -149,15 +150,16 @@ var makeHover = async function(e) {
             const span = await document.createElement('span');
             span.classList.add('tooltiptext');
 
-            await add_plus_button(span, word_and_sentence);
-
             span.style.left = `${e.detail.clientX+10}px`;
             span.style.top = `${e.detail.clientY+10}px`;
 
-            var result = await postTranslation(word_and_sentence);
+            var translation = await postTranslation(word_and_sentence);
+
+            await add_plus_button(span, word_and_sentence, translation);
+
             span.appendChild(document.createTextNode("Translated word:"));
             span.appendChild(document.createElement('br'));
-            span.appendChild(document.createTextNode(word_and_sentence[0] + " -> " + result));
+            span.appendChild(document.createTextNode(word_and_sentence[0] + " -> " + translation));
 
             target.classList.add(MVC);
             target.appendChild(span);

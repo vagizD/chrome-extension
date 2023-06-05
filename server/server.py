@@ -71,7 +71,6 @@ def addWord(data=Body()):
 
     status = process_word(data)
 
-    print(data)
     return {"status": status}
 
 

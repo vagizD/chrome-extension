@@ -55,8 +55,9 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                         "Access-Control-Allow-Origin": "*",
                         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"},
                     body: JSON.stringify({
-                        id: userInfo[0]["id"],
+                        google_id: userInfo[0]["id"],
                         word: request["word_and_sentence"][0],
+                        translation: request["translation"],
                         context: JSON.stringify(
                             {sentence: request["word_and_sentence"][1],
                             website: request["website"]})
