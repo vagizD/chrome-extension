@@ -33,15 +33,18 @@ async def open_menu(message: Message, state: FSMContext):
         logging.info(ex)
 
 async def open_stats(call: CallbackQuery):
-    database = call.bot.get("database")
-    trained = await database.count_user_trained_words(tg_tag=call.from_user.username)
-    not_trained = await database.count_user_not_trained_words(tg_tag=call.from_user.username)
-    reply = [
-        f"За все время Вы добавили <b>{trained + not_trained}</b> слов/слова!",
-        f"Из них Вы уже успели выучить <b>{trained}</b> слов/слова.",
-        f"Вам предстоит еще выучить {not_trained} слов/слова."
-    ]
-    await call.message.edit_text("\n\n".join(reply), reply_markup=users_kb.to_menu)
+    if not await registered(call.bot, call.from_user.username):
+        await notify_unregistered(call)
+    else:
+        database = call.bot.get("database")
+        trained = await database.count_user_trained_words(tg_tag=call.from_user.username)
+        not_trained = await database.count_user_not_trained_words(tg_tag=call.from_user.username)
+        reply = [
+            f"За все время Вы добавили <b>{trained + not_trained}</b> слов/слова!",
+            f"Из них Вы уже успели выучить <b>{trained}</b> слов/слова.",
+            f"Вам предстоит еще выучить {not_trained} слов/слова."
+        ]
+        await call.message.edit_text("\n\n".join(reply), reply_markup=users_kb.to_menu)
 
 async def open_help(call: CallbackQuery):
     await call.message.edit_text("Какая-то информация / Контакты", reply_markup=users_kb.to_menu)

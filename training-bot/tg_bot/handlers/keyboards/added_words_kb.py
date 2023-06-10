@@ -4,11 +4,11 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 words_choice = InlineKeyboardMarkup(row_width=1,
                                                   inline_keyboard=[
                                                       [
-                                                          InlineKeyboardButton(text="Выученные",
+                                                          InlineKeyboardButton(text="Изученные",
                                                                                callback_data="trained")
                                                       ],
                                                       [
-                                                          InlineKeyboardButton(text="Невыученные",
+                                                          InlineKeyboardButton(text="Неизученные",
                                                                                callback_data="not_trained")
                                                       ],
                                                       [

@@ -1,12 +1,16 @@
 from aiogram import Dispatcher
 from aiogram.types import CallbackQuery
 from .keyboards import added_words_kb
+from .utils import registered, notify_unregistered
 
 async def to_words_choice(call: CallbackQuery):
     await call.message.edit_text("Выберите нужный тип слов", reply_markup=added_words_kb.words_choice)
 
 async def open_words(call: CallbackQuery):
-    await call.message.edit_text("Выберите нужный тип слов", reply_markup=added_words_kb.words_choice)
+    if not await registered(call.bot, call.from_user.username):
+        await notify_unregistered(call)
+    else:
+        await call.message.edit_text("Выберите нужный тип слов", reply_markup=added_words_kb.words_choice)
 
 async def show_trained_words(call: CallbackQuery):
     data = await call.bot.get("database").get_user_trained_words(tg_tag=call.from_user.username)

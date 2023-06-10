@@ -1,7 +1,9 @@
+from typing import List
+from dataclasses import dataclass
 from aiogram import Bot
 from aiogram.types import CallbackQuery
 from aiogram.utils.exceptions import MessageNotModified
-
+import random
 from .keyboards import users_kb
 
 async def registered(bot: Bot, tg_tag: str) -> bool:

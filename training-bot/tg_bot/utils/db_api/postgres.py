@@ -57,7 +57,11 @@ class Database:
                  "tg_tag VARCHAR(100),"
                  "word VARCHAR(40),"
                  "trans VARCHAR(40),"
-                 "trained BOOLEAN NOT NULL);")
+                 "trained BOOLEAN NOT NULL,"
+                 "website VARCHAR(300),"
+                 "sentence VARCHAR(300),"
+                 "added_at TIMESTAMP,"
+                 "learning_step INT NOT NULL);")
         await self.execute(query, execute=True)
 
     async def get_user(self, **kwargs):
