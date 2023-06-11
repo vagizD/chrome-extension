@@ -1,6 +1,6 @@
 import asyncio
 import logging
-import sys, os
+
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.types import ParseMode
@@ -12,6 +12,7 @@ from tg_bot.handlers.trainings import register_training
 from tg_bot.handlers.added_words import register_added_words
 from tg_bot.handlers.elimination_mode import register_elimination_mode
 from tg_bot.handlers.gaps_mode import register_gaps_mode
+from tg_bot.handlers.main_mode import register_main_mode
 from tg_bot.config import load_config
 from tg_bot.utils.db_api.postgres import Database
 
@@ -27,10 +28,11 @@ def register_filters(dp: Dispatcher):
 def register_handlers(dp: Dispatcher):
     register_users(dp)
     register_admins(dp)
-    register_added_words(dp)
     register_training(dp)
-    register_elimination_mode(dp)
     register_gaps_mode(dp)
+    register_main_mode(dp)
+    register_added_words(dp)
+    register_elimination_mode(dp)
 
 async def main():
     config = load_config(".env")

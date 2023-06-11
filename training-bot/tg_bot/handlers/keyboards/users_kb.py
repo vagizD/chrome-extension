@@ -16,13 +16,13 @@ menu_choice = InlineKeyboardMarkup(row_width=1,
                                             InlineKeyboardButton(text="Тренироваться", callback_data="train")
                                          ],
                                          [
-                                            InlineKeyboardButton(text="Добавленные слова", callback_data="words")
+                                            InlineKeyboardButton(text="Добавленные слова", callback_data="show_words")
                                          ],
                                          [
-                                            InlineKeyboardButton(text="Посмотреть статистику", callback_data="stats")
+                                            InlineKeyboardButton(text="Посмотреть статистику", callback_data="show_stats")
                                          ],
                                          [
-                                            InlineKeyboardButton(text="Помощь", callback_data="help")
+                                            InlineKeyboardButton(text="Помощь", callback_data="get_help")
                                          ]
                                      ])
 

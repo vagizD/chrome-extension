@@ -12,8 +12,11 @@ async def to_menu(call: CallbackQuery, state: FSMContext):
 async def start(message: Message):
     reply = [
         f"<b>Приветствую, {message.from_user.first_name}!</b> 👋",
-        f"Информация о боте.",
-        f"Перед использованием нужно зарегистрироваться. Инструкция"
+        f"Данный бот поможет Вам учить английский эффективней! Вы можете:",
+        "• просматривать добавленные расширением слова\n"
+        "• отслеживать статистику выученных слов\n"
+        "• тренировать запоминание слов в различных режимах",
+        f"Перед использованием <u>необходимо зарегистрировать свой телеграм аккаунт</u> в настройках расширения."
     ]
     await message.answer("\n\n".join(reply), reply_markup=users_kb.check_registry)
 
@@ -37,17 +40,21 @@ async def open_stats(call: CallbackQuery):
         await notify_unregistered(call)
     else:
         database = call.bot.get("database")
-        trained = await database.count_user_trained_words(tg_tag=call.from_user.username)
-        not_trained = await database.count_user_not_trained_words(tg_tag=call.from_user.username)
+        trained = await database.get_count_words(tg_tag=call.from_user.username, trained=True)
+        not_trained = await database.get_count_words(tg_tag=call.from_user.username, trained=False)
         reply = [
-            f"За все время Вы добавили <b>{trained + not_trained}</b> слов/слова!",
-            f"Из них Вы уже успели выучить <b>{trained}</b> слов/слова.",
-            f"Вам предстоит еще выучить {not_trained} слов/слова."
+            f"〩 ➝ Общее количество добавленных слов: {trained + not_trained}",
+            f"✓  ➝ Количество успешно выученных слов: {trained}",
+            f"✕  ➝ Количество еще не изученных слов: {not_trained}"
         ]
         await call.message.edit_text("\n\n".join(reply), reply_markup=users_kb.to_menu)
 
 async def open_help(call: CallbackQuery):
-    await call.message.edit_text("Какая-то информация / Контакты", reply_markup=users_kb.to_menu)
+    reply = [
+        "Любые вопросы, предложения и замечания, в том числе и баги, приветствуются в личные сообщения:",
+        "⇉   @I8usy_I8eaver\n⇉   @vagizdaudov\n⇉   @perkyfever"
+    ]
+    await call.message.edit_text(text="\n\n".join(reply), reply_markup=users_kb.to_menu)
 async def add_word(message: Message, state: FSMContext): # TODO: REMOVE
     await message.answer("Введите слово и перевод через пробел. Ex: apple яблоко")
     await state.set_state("get_word")
@@ -64,11 +71,11 @@ async def add_word_execute(message: Message, state: FSMContext): # TODO: REMOVE
     await state.finish()
 
 def register_users(dp: Dispatcher):
-    dp.register_callback_query_handler(to_menu, lambda call: call.data == "to_menu")
+    dp.register_callback_query_handler(to_menu, lambda call: call.data == "to_menu", state="*")
     dp.register_message_handler(start, commands=["start"], state="*")
     dp.register_message_handler(open_menu, commands=["menu"], state="*")
-    dp.register_callback_query_handler(open_stats, lambda call: call.data == "stats")
+    dp.register_callback_query_handler(open_stats, lambda call: call.data == "show_stats")
     dp.register_callback_query_handler(check_registry, lambda call: call.data == "check_registry")
-    dp.register_callback_query_handler(open_help, lambda call: call.data == "help")
+    dp.register_callback_query_handler(open_help, lambda call: call.data == "get_help")
     dp.register_message_handler(add_word, commands=['add_word'], state='*')
     dp.register_message_handler(add_word_execute, state='get_word')

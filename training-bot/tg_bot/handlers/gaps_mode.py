@@ -4,10 +4,11 @@ from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.types import CallbackQuery, Message
 from .trainings import process_data
-from .keyboards import trainings_kb, gaps_kb
+from .keyboards import trainings_kb
 
 async def intro_info(call: CallbackQuery, state: FSMContext):
-    words = await process_data(call.bot, call.from_user.username)
+    await call.answer()
+    words = await process_data(bot=call.bot, tg_tag=call.from_user.username, trained=False)
     await state.set_state("gaps_mode")
     await state.update_data(right=0)
     await state.update_data(overall=0)
@@ -18,22 +19,26 @@ async def intro_info(call: CallbackQuery, state: FSMContext):
     if cur < len(words):
         await state.update_data(cur=cur)
         reply = [
-            "<b><u>Режим дополнения</u></b>",
+            "<b><u>Дополни предложение</u></b>",
             "<b><u>Описание:</u></b> в данном режиме выбираются все неизученные слова. На каждом шаге необходимо "
             "вставить корректно переведенное слово в предложение. Вы можете завершить тренировку в любой момент, либо "
-            "она завершится автоматически по истечении слов."
+            "она автоматически завершится по истечении слов."
         ]
-        await call.message.edit_text(text="\n\n".join(reply), reply_markup=gaps_kb.gaps_start)
+        await call.message.edit_text(text="\n\n".join(reply), reply_markup=trainings_kb.gaps_mode_start)
     else:
         await state.finish()
-        await call.message.edit_text(text="У вас нет неизученных слов! Возвращайтесь, когда добавите парочку.",
-                                     reply_markup=trainings_kb.to_mode_choice)
+        reply = [
+            "К сожалению, с Вашими словами нет предложений.",
+            "Возвращайтесь, когда добавите парочку других."
+        ]
+        await call.message.edit_text(text="\n\n".join(reply), reply_markup=trainings_kb.to_mode_choice)
 
 async def start_round(call: CallbackQuery, state: FSMContext):
+    await call.answer()
     async with state.proxy() as data:
         current = data["words"][data["cur"]]
         reply = [
-            "Введите корректный перевод подходящего слова:",
+            "Вставьте корректный перевод подходящего слова:",
             f"{current.sentence.replace(current.word, '___')} ({current.trans})"
         ]
         data["cur"] += 1
@@ -62,7 +67,7 @@ async def next_word(message: Message, state: FSMContext):
         else:
             current = data["words"][data["cur"]]
             reply = [
-                "Введите корректный перевод подходящего слова:",
+                "Вставьте корректный перевод подходящего слова:",
                 f"{current.sentence.replace(current.word, '___')} ({current.trans})"
             ]
             data["cur"] += 1
