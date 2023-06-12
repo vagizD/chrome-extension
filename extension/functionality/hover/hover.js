@@ -97,7 +97,7 @@ async function postTranslation(line){
     if(response.ok === true) {
         const new_word = await response.json();
         console.log(new_word["translation"].toString())
-        return new_word["translation"];
+        return new_word;
     }
     else {
         const error = await response.json();
@@ -156,11 +156,32 @@ var makeHover = async function(e) {
             var translation = await postTranslation(word_and_sentence);
 
             await add_plus_button(span, word_and_sentence, translation);
-
+            var new_height = 0;
+            var new_width = 0;
+            span.appendChild(document.createElement('t'))
             span.appendChild(document.createTextNode("Translated word:"));
-            span.appendChild(document.createElement('br'));
-            span.appendChild(document.createTextNode(word_and_sentence[0] + " -> " + translation));
+            //span.appendChild(document.createElement('br'));
+            var extr = "";
+            console.log(translation["extras"])
 
+            span.appendChild(document.createTextNode(word_and_sentence[0] + " -> " + translation["translation"]));
+            span.appendChild(document.createElement('br'));
+            new_height += 20;
+            new_width += 9*15 + word_and_sentence[0].length*9 + 9*3 + translation["translation"].length*9;
+            for(var key of Object.keys(translation["extras"])){
+                if(key === "noun" || key === "adjective" || key === "verb") {
+                    extr += key + ": ";
+                    extr += translation["extras"][key].join(", ");
+                    span.appendChild(document.createTextNode(extr));
+                    new_width = Math.max(new_width, extr.length * 8);
+                    extr = "";
+                    span.appendChild(document.createElement('br'));
+                    new_height += 20
+                }
+            }
+            new_height += 20;
+            span.style.width = `${new_width}px`;
+            span.style.height = `${new_height}px`;
             target.classList.add(MVC);
             target.appendChild(span);
 

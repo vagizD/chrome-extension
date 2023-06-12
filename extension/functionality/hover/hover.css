@@ -12,12 +12,13 @@
 .tooltip .tooltiptext {
   visibility: hidden;
   width: 170px;
-  height: 70px;
+  height: 100px;
   font-size: 14px;
   margin-left: -60px;
   background-color: black;
   color: #fff;
-  text-align: center;
+  /*text-align: center;*/
+  text-align: left;
   border-radius: 6px;
   padding: 5px 0;
 
