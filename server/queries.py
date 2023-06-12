@@ -85,7 +85,7 @@ def add_word(cursor, data):
     data['website'] = data['context']['website']
     data['trans'] = data['translation']
     data['trained'] = False
-    data['added_at'] = datetime.now().replace(microsecond=0)
+    data['learned_at'] = datetime.now().replace(microsecond=0)
     data.pop('context')
     data.pop('translation')
 
