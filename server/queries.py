@@ -83,8 +83,9 @@ def get_tag(cursor, google_id):
 def add_word(cursor, data):
     data['sentence'] = data['context']['sentence']
     data['website'] = data['context']['website']
-    data['trans'] = data['translation']
+    data['trans'] = data['translation']['translation']
     data['trained'] = False
+    data['learning_step'] = 0
     data['learned_at'] = datetime.now().replace(microsecond=0)
     data.pop('context')
     data.pop('translation')
@@ -92,6 +93,7 @@ def add_word(cursor, data):
     columns, values = get_cols_and_vals(data, default_col='word_id')
 
     query = f""" INSERT INTO words ({columns}) VALUES ({values}) """
+    print(query)
 
     cursor.execute(query)
 

@@ -1,5 +1,5 @@
 .idea
 .DS_Store
 .env
-__pycache__/
+server/logs/__pycache__/logs.cpython-39.pyc
 server/logs/server_logs.txt
