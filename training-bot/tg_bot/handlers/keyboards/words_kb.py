@@ -11,6 +11,9 @@ def get_page_keyboard(page: int, max_page: int) -> InlineKeyboardMarkup:
                                         InlineKeyboardButton(text=f"{max_page}", callback_data="void")
                                     ],
                                     [
+                                        InlineKeyboardButton(text="Удалить слово", callback_data="delete_word")
+                                    ],
+                                    [
                                         InlineKeyboardButton(text="◄ Назад", callback_data="to_words_choice")
                                     ]
                                 ])

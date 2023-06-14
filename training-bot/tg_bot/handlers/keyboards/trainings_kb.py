@@ -6,7 +6,7 @@ choose_training_mode = InlineKeyboardMarkup(row_width=1,
                                                     InlineKeyboardButton(text="Главная тренировка", callback_data="main_mode")
                                                 ],
                                                 [
-                                                    InlineKeyboardButton(text="До последнего", callback_data="elimination_mode")
+                                                    InlineKeyboardButton(text="До последнего слова", callback_data="elimination_mode")
                                                 ],
                                                 [
                                                   InlineKeyboardButton(text="Дополни предложение", callback_data="gaps_mode")

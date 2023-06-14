@@ -35,14 +35,16 @@ async def process_data(bot: Bot, **kwargs) -> List[Data]:
 async def to_mode_choice(call: CallbackQuery, state: FSMContext):
     await call.answer()
     await state.finish()
-    await call.message.edit_text(text="Выберите режим", reply_markup=trainings_kb.choose_training_mode)
+    await call.message.edit_text(text="Выберите режим тренировки, чтобы увидеть его описание.",
+                                 reply_markup=trainings_kb.choose_training_mode)
 
 async def choose_training_mode(call: CallbackQuery):
     await call.answer()
     if not await registered(call.bot, call.from_user.username):
         await notify_unregistered(call)
     else:
-        await call.message.edit_text(text="Выберите режим", reply_markup=trainings_kb.choose_training_mode)
+        await call.message.edit_text(text="Выберите режим тренировки, чтобы увидеть его описание.",
+                                     reply_markup=trainings_kb.choose_training_mode)
 
 
 def register_training(dp: Dispatcher):

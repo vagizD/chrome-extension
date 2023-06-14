@@ -28,10 +28,19 @@ async def check_registry(call: CallbackQuery, state: FSMContext):
 
 async def open_menu(message: Message, state: FSMContext):
     await state.finish()
+    reply = [
+        "Выберите, что вы хотите?",
+        "• <b>Тренироваться:</b> выбирайте режимы для тренировки новых добавленных слов, проверяйте свои знания в "
+        "быстрых тренировках и не забывайте о главной интервальной тренировке.",
+        "• <b>Добавленные слова:</b> просматривайте добавленные изученные и неизученные слова, вспоминайте страницы, "
+        "с которых были добавлены эти слова, удаляйте ненужные и лишние слова.",
+        "• <b>Просмотреть статистику:</b> следите за количеством уже изученных слов, общим количеством добавленных слов.",
+        "• <b>Помощь:</b> контакты для вопросов и оповещения о багах, предложениях."
+    ]
     try:
-        await message.edit_text("Выберите, что вы хотите?", reply_markup=users_kb.menu_choice)
+        await message.edit_text(text="\n\n".join(reply), reply_markup=users_kb.menu_choice)
     except MessageCantBeEdited:
-        await message.answer("Выберите, что вы хотите?", reply_markup=users_kb.menu_choice)
+        await message.answer(text="\n\n".join(reply), reply_markup=users_kb.menu_choice)
     except Exception as ex:
         logging.info(ex)
 
@@ -55,15 +64,15 @@ async def open_help(call: CallbackQuery):
         "⇉   @I8usy_I8eaver\n⇉   @vagizdaudov\n⇉   @perkyfever"
     ]
     await call.message.edit_text(text="\n\n".join(reply), reply_markup=users_kb.to_menu)
-async def add_word(message: Message, state: FSMContext): # TODO: REMOVE
+async def add_word(message: Message, state: FSMContext):
     await message.answer("Введите слово и перевод через пробел. Ex: apple яблоко")
     await state.set_state("get_word")
 
-async def add_word_execute(message: Message, state: FSMContext): # TODO: REMOVE
+async def add_word_execute(message: Message, state: FSMContext):
     db = message.bot.get("database")
     user = await db.get_user(tg_tag=message.from_user.username)
     if user is None:
-        await message.answer("Вы не зареганы")
+        await message.answer("Вы не зарегистрированы")
     else:
         items = message.text.split(' ')
         await db.add_word(message.from_user.username, items[0], items[1])

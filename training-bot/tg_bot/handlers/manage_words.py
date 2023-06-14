@@ -1,25 +1,27 @@
+import logging
 from typing import List
 
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
-from aiogram.types import CallbackQuery
+from aiogram.types import CallbackQuery, Message
 from .keyboards import words_kb
 from .utils import registered, notify_unregistered
 from .trainings import process_data, Data
 from math import ceil
 
-PAGE_SIZE = 10
+PAGE_SIZE = 6
+
 async def to_words_type_choice(call: CallbackQuery, state: FSMContext):
     await call.answer()
     await state.finish()
-    await call.message.edit_text("Выберите нужный тип слов", reply_markup=words_kb.words_choice)
+    await call.message.edit_text(text="Выберите тип слов, чтобы посмотреть их список.", reply_markup=words_kb.words_choice)
 
 async def choose_words_type(call: CallbackQuery):
     await call.answer()
     if not await registered(call.bot, call.from_user.username):
         await notify_unregistered(call)
     else:
-        await call.message.edit_text("Выберите нужный тип слов", reply_markup=words_kb.words_choice)
+        await call.message.edit_text(text="Выберите тип слов, чтобы посмотреть их список.", reply_markup=words_kb.words_choice)
 async def show_words(call: CallbackQuery, state: FSMContext):
     await call.answer()
     words: List[Data] = []
@@ -54,8 +56,25 @@ async def show_words_page(call: CallbackQuery, state: FSMContext):
                                      reply_markup=words_kb.get_page_keyboard(page=data["cur"] + 1, max_page=data["max_page"]),
                                      disable_web_page_preview=True)
 
+async def delete_word(call: CallbackQuery, state: FSMContext):
+    await call.answer()
+    await state.set_state("delete_word")
+    await call.message.answer(text="Введите слово на английском, которое Вы хотите удалить.")
+
+async def delete_word_execute(message: Message, state: FSMContext):
+    try:
+        await message.bot.get("database").delete_word(tg_tag=message.from_user.username, word=message.text)
+        await message.answer(text="Слово успешно удалено", reply_markup=words_kb.to_words_choice)
+    except Exception as ex:
+        logging.info(ex)
+        await message.answer(text="Не удалось найти слово, убедитесь в том, что вы в точности ввели добавленное слово.",
+                             reply_markup=words_kb.to_words_choice)
+    await state.finish()
+
 def register_added_words(dp: Dispatcher):
     dp.register_callback_query_handler(choose_words_type, lambda call: call.data == "show_words")
     dp.register_callback_query_handler(to_words_type_choice, lambda call: call.data == "to_words_choice", state="*")
     dp.register_callback_query_handler(show_words, lambda call: call.data in ["trained", "not_trained"])
     dp.register_callback_query_handler(show_words_page, lambda call: call.data in ["prev_page", "next_page"], state="show_words")
+    dp.register_callback_query_handler(delete_word, lambda call: call.data == "delete_word", state="*")
+    dp.register_message_handler(delete_word_execute, state="delete_word")

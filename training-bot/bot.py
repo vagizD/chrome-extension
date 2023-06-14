@@ -9,12 +9,12 @@ from tg_bot.filters.admins import AdminFilter
 from tg_bot.handlers.admins import register_admins, notify
 from tg_bot.handlers.users import register_users
 from tg_bot.handlers.trainings import register_training
-from tg_bot.handlers.added_words import register_added_words
+from tg_bot.handlers.manage_words import register_added_words
 from tg_bot.handlers.elimination_mode import register_elimination_mode
 from tg_bot.handlers.gaps_mode import register_gaps_mode
 from tg_bot.handlers.main_mode import register_main_mode
 from tg_bot.config import load_config
-from tg_bot.utils.db_api.postgres import Database
+from tg_bot.db_api.postgres import Database
 
 
 logging.basicConfig(

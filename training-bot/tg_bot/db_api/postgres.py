@@ -84,10 +84,14 @@ class Database:
         query = "SELECT * FROM Words WHERE tg_tag = $1 AND learned_at < $2 AND learning_step = $3"
         return await self.execute(query, tg_tag, learned_at, learning_step, fetch=True)
 
-    async def add_word(self, tg_tag, word, trans): # TODO: REMOVE AFTER TESTS
+    async def add_word(self, tg_tag, word, trans):
         query = "INSERT INTO Words (google_id, tg_tag, word, trans, trained, learned_at, learning_step) " \
                 "VALUES($1, $2, $3, $4, $5, $6, $7)"
         return await self.execute(query, "1", tg_tag, word, trans, False, datetime.now(), 0, execute=True)
+
+    async def delete_word(self, tg_tag: str, word: str):
+        query = f"DELETE FROM Words WHERE tg_tag = $1 AND word = $2"
+        return await self.execute(query, tg_tag, word, execute=True)
 
     async def mark_as_trained(self, word_id: int):
         query = f"UPDATE Words SET trained = true WHERE word_id = {word_id}"
